@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin
+    user: "${UID}:${GID}"
+    ports:
+      - 8096:8096
+    volumes:
+      - $PWD/config_j/:/config
+      - $PWD/downloads:/data/movies
+    environment:
+      - TZ=Asia/Jerusalem
+      - PUID=1000
+      - PGID=1000
+    restart: always  
+  torrent:
+    image: wernight/qbittorrent
+    user: "${UID}:${GID}"
+    ports:
+      - 6881:6881/udp
+      - 6881:6881/tcp
+      - 8080:8080
+    volumes:
+      - $PWD/config/:/config
+      - $PWD/torrents:/torrents
+      - $PWD/downloads:/downloads
+    restart: always
+  filebrowser:
+    image: hurlenko/filebrowser
+    user: "${UID}:${GID}"
+    ports:
+      - 8081:8080
+    volumes:
+      - $PWD/:/data
+      - $PWD/config_f:/config
+    environment:
+      - FB_BASEURL=/filebrowser
+    restart: always
